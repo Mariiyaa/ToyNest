@@ -1,9 +1,9 @@
 var admin = require("firebase-admin");
 
-var serviceAccount = require("./serviceAccountKey.json");
+import firebaseConfig from './firebaseConfig.js';
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
+  credential: admin.credential.cert(firebaseConfig)
 });
 
 module.exports=admin
