@@ -1,6 +1,6 @@
 var admin = require("firebase-admin");
 
-import serviceAccountKey from './serviceAccountKey';
+var serviceAccountKey =require ('./serviceAccountKey')
 
 console.log(serviceAccountKey)
 
