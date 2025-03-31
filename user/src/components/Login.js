@@ -62,7 +62,7 @@ const Login = ({ onClose }) => {
       const idToken = await result.user.getIdToken();
 
       console.log("Google Login ID Token:", idToken);
-      const response = await axios.post(`${process.env.REACT_APP_BACK_PORT}/api/auth/login-google`, { firebaseToken: idToken });
+      const response = await axios.post('api/auth/login-google', { firebaseToken: idToken });
       setSuccess('Login successful!');
       console.log(response.data)
       saveUserToSessionStorage(response.data); // Store user in localStorage

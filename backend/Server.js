@@ -39,28 +39,10 @@ const productRoutes = require('./routes/product');
 const orderRoutes = require('./routes/order');
 const couponRoutes = require('./routes/coupon');
 const cartRoutes = require('./routes/cart');
-// Connect to MongoDB with optimized settings
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
-  socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
-})
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log('MongoDB Connected'))
-.catch(err => {
-  console.error('MongoDB connection error:', err);
-  process.exit(1);
-});
-
-// Add error handler for mongoose connection
-mongoose.connection.on('error', err => {
-  console.error('MongoDB connection error:', err);
-});
-
-// Add error handler for mongoose disconnection
-mongoose.connection.on('disconnected', () => {
-  console.log('MongoDB disconnected');
-});
+.catch(err => console.log(err));
 
 // Use routes
 app.use('/api/auth', authRoutes);

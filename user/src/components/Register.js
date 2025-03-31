@@ -37,7 +37,7 @@ const Register = ({ onClose }) => {
       return;
     }
     try {
-        await axios.post(`${process.env.REACT_APP_BACK_PORT}/api/auth/register`, { name ,email, password});
+        await axios.post('/api/auth/register', { name ,email, password});
   
         setSuccess('Signup successful!');
         
@@ -59,7 +59,7 @@ const Register = ({ onClose }) => {
       console.log("Google Login ID Token:", idToken); // Check if token is being received
   
       const response = await axios.post(
-        `${process.env.REACT_APP_BACK_PORT}/api/auth/register-google`, 
+        '/api/auth/register-google', 
         { firebaseToken: idToken } // Ensure token is sent correctly
       );
   

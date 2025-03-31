@@ -14,22 +14,10 @@ export const fetchCart = async () => {
 }
 
   try {
-    const response = await axios.post(
-      `${process.env.REACT_APP_BACK_PORT}/api/cart`,
-      { userId },
-      {
-        timeout: 8000, // 8 second timeout
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      }
-    );
+    const response = await axios.post('/api/cart',{userId});
     return response.data;
   } catch (error) {
     console.error("Error fetching cart:", error);
-    if (error.code === 'ECONNABORTED') {
-      console.error('Request timed out');
-    }
     return [];
   }
 };
@@ -43,7 +31,7 @@ export const addToCart = async (userId, product, selectedVariant) => {
 
   try {
     await axios.post(
-        `${process.env.REACT_APP_BACK_PORT}/api/cart/add`,
+        '/api/cart/add',
       {userId, product, selectedVariant }
     );
   } catch (error) {
@@ -60,7 +48,7 @@ export const removeFromCart = async (userId, id, variant) => {
 
   try {
     await axios.post(
-      `${process.env.REACT_APP_BACK_PORT}/api/cart/remove`,
+      'api/cart/remove',
       { userId,id, variant }
     );
   } catch (error) {
@@ -75,7 +63,7 @@ export const updateCartItem = async (userId, id, variant, quantity) => {
   }
 
   try {
-    await axios.post(`${process.env.REACT_APP_BACK_PORT}/api/cart/update`, {
+    await axios.post('/api/cart/update', {
       userId,
       id,
       variant,
