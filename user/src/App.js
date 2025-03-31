@@ -8,6 +8,7 @@ import Cart from './pages/Cart';
 import Footer from './components/Footer';
 import axios from 'axios'
 import Profile from './pages/Profile';
+import Checkout from './pages/Checkout';
 
 
 axios.defaults.baseURL = process.env.REACT_APP_BACK_PORT
@@ -21,7 +22,7 @@ const App = () => {
         <Route path="/products" element={<Products />} />
         <Route path="/products/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart />} />
-         {/*<Route path="/checkout" element={<Checkout />} />*/}
+         <Route path="/checkout" element={<Checkout />} />
         <Route path="/profile" element={<Profile />} /> 
       </Routes>
       <Footer />

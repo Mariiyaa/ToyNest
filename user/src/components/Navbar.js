@@ -15,19 +15,31 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+
     const storedUser = sessionStorage.getItem("user");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
-
     const updateCartCount = async () => {
-      const cart = await fetchCart();
-      setCartCount(cart.length);
+      try {
+        const cart = await fetchCart();
+    
+        // Ensure cart is an array before accessing length
+        if (!cart || !Array.isArray(cart)) {
+          setCartCount(0); // Default to 0 if cart is undefined or not an array
+          return;
+        }
+    
+        setCartCount(cart.length);
+      } catch (error) {
+        console.error("Error fetching cart:", error);
+        setCartCount(0); // Default to 0 in case of an error
+      }
     };
-
+    
     updateCartCount();
     window.addEventListener("cartUpdated", updateCartCount);
-
+    
     return () => {
       window.removeEventListener("cartUpdated", updateCartCount);
     };
