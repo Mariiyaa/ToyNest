@@ -7,6 +7,12 @@ require('dotenv').config();
 const app = express();
 app.use(express.json());
 
+app.use((req, res, next) => {
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+  res.setHeader("Cross-Origin-Embedder-Policy", "require-corp"); // Optional, based on use case
+  next();
+});
+
 app.use(cors({
     credentials: true,
     origin: process.env.CLIENT_URL, // Allow requests from your frontend
