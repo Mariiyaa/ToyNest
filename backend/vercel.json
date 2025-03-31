@@ -1,5 +1,12 @@
 {
     "version": 2,
+    
+        "functions": {
+          "api/*": {
+            "timeout": 30
+          }
+        },
+      
     "builds": [
       { "src": "Server.js", "use": "@vercel/node" } 
     ],
