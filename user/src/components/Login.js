@@ -3,7 +3,7 @@ import { X, Mail, Lock } from "lucide-react";
 import { Link,useNavigate } from "react-router-dom";
 import Register from "./Register";
 import axios from 'axios';
-import { auth } from "../firebaseConfig"; 
+import { auth } from "../firebaseConfig"
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 const Login = ({ onClose }) => {
