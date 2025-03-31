@@ -83,6 +83,7 @@ router.post('/login-google', async (req, res) => {
       user = new User({ email: decodedFirebaseToken.email, password: null });
       await user.save();
     }
+    console.log(user)
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
     res.json({ token, userId: user._id, isAdmin: user.isAdmin, name:user.name, email:user.email });
