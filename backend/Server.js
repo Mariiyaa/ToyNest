@@ -7,6 +7,11 @@ require('dotenv').config();
 const app = express();
 app.use(express.json());
 
+
+mongoose.connect(process.env.MONGO_URI)
+.then(() => console.log('MongoDB Connected'))
+.catch(err => console.log(err));
+
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", process.env.CLIENT_URL);
   res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE");
@@ -40,9 +45,7 @@ const orderRoutes = require('./routes/order');
 const couponRoutes = require('./routes/coupon');
 const cartRoutes = require('./routes/cart');
 // Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI)
-.then(() => console.log('MongoDB Connected'))
-.catch(err => console.log(err));
+
 
 // Use routes
 app.use('/api/auth', authRoutes);
