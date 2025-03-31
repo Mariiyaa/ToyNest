@@ -14,10 +14,22 @@ export const fetchCart = async () => {
 }
 
   try {
-    const response = await axios.post(`${process.env.REACT_APP_BACK_PORT}/api/cart`,{userId});
+    const response = await axios.post(
+      `${process.env.REACT_APP_BACK_PORT}/api/cart`,
+      { userId },
+      {
+        timeout: 8000, // 8 second timeout
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    );
     return response.data;
   } catch (error) {
     console.error("Error fetching cart:", error);
+    if (error.code === 'ECONNABORTED') {
+      console.error('Request timed out');
+    }
     return [];
   }
 };
