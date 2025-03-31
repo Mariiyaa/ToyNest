@@ -44,7 +44,7 @@ const Login = ({ onClose }) => {
   const handleLogin =async (e) => {
     e.preventDefault();
     try {
-       const response=  await axios.post(`${process.env.REACT_APP_BACK_PORT}/api/auth/login`, { email, password});
+       const response=  await axios.post('/api/auth/login', { email, password});
   
         
         saveUserToSessionStorage(response.data);
