@@ -15,14 +15,14 @@ app.use(cors({
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log(`✅ MongoDB connected to ${process.env.MONGO_URI}`))
-  .catch((err) => console.error('❌ MongoDB connection error:', err));
+  .catch((err) => console.error(`❌ MongoDB connection error:${process.env.MONGO_URI}`, err));
 
 mongoose.connection.on('connected', () => {
   console.log('✅ Mongoose connected successfully');
 });
 
 mongoose.connection.on('error', (err) => {
-  console.error('❌ Mongoose connection error:', err);
+  console.error(`❌ Mongoose connection error:${process.env.MONGO_URI}`, err);
 });
 
 // Import routes
