@@ -44,21 +44,13 @@ const Login = ({ onClose }) => {
   const handleLogin =async (e) => {
     e.preventDefault();
     try {
-       const response=  await axios.post('/api/auth/login', { email, password}, {
-         timeout: 10000, // 10 second timeout
-         headers: {
-           'Content-Type': 'application/json'
-         }
-       });
+       const response=  await axios.post('/api/auth/login', { email, password});
   
+        
         saveUserToSessionStorage(response.data);
         
       } catch (err) {
-        if (err.code === 'ECONNABORTED') {
-          setError('Request timed out. Please try again.');
-        } else {
-          setError(err.response?.data?.message || 'Something went wrong. Please try again.');
-        }
+        setError(err.response?.data?.message || 'Something went wrong. Please try again.');
       }
   };
 
@@ -70,23 +62,15 @@ const Login = ({ onClose }) => {
       const idToken = await result.user.getIdToken();
 
       console.log("Google Login ID Token:", idToken);
-      const response = await axios.post('api/auth/login-google', { firebaseToken: idToken }, {
-        timeout: 15000, // 15 second timeout for Google login
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+      const response = await axios.post('api/auth/login-google', { firebaseToken: idToken });
       setSuccess('Login successful!');
       console.log(response.data)
-      saveUserToSessionStorage(response.data);
+      saveUserToSessionStorage(response.data); // Store user in localStorage
       
+
     } catch (error) {
       console.error(error);
-      if (error.code === 'ECONNABORTED') {
-        setError('Request timed out. Please try again.');
-      } else {
-        setError(error.response?.data?.message || "Google login failed. Please try again.");
-      }
+      setError("Google login failed.");
     }
   };
 

@@ -5,27 +5,12 @@ const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
-
-// Set timeout for all routes
-app.use((req, res, next) => {
-  res.setTimeout(30000); // 30 second timeout
-  next();
-});
-
 app.use(express.json());
 
-// Add error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: 'Something went wrong!', error: err.message });
-});
 
-mongoose.connect(process.env.MONGO_URI, {
-  serverSelectionTimeoutMS: 5000, // 5 second timeout for MongoDB connection
-  socketTimeoutMS: 45000, // 45 second timeout for MongoDB operations
-})
+mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log('MongoDB Connected'))
-.catch(err => console.log('MongoDB Connection Error:', err));
+.catch(err => console.log(err));
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", process.env.CLIENT_URL);
