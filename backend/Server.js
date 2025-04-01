@@ -1,3 +1,4 @@
+// Backend: server.js (Main Entry Point)
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -6,24 +7,45 @@ require('dotenv').config();
 const app = express();
 app.use(express.json());
 
-// CORS configuration
+
+
+
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", process.env.CLIENT_URL);
+  res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.header("Access-Control-Allow-Credentials", "true");
+  
+  if (req.method === "OPTIONS") {
+    return res.status(204).send();
+  }
+  
+  next();
+});
+
+console.log("CORS Configured for:", process.env.CLIENT_URL);
+
+
 app.use(cors({
     credentials: true,
     origin: process.env.CLIENT_URL, // Allow requests from your frontend
-}));
+    
+  }));
 
-// MongoDB connection
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log(`✅ MongoDB connected to ${process.env.MONGO_URI}`))
-  .catch((err) => console.error(`❌ MongoDB connection error:${process.env.MONGO_URI}`, err));
+  .then(() => {
+    app.listen(process.env.PORT || 5000, () => console.log(`Server running on port ${process.env.PORT || 5000}`));
+  })
+  .catch((err) => console.error(err));
 
 mongoose.connection.on('connected', () => {
-  console.log('✅ Mongoose connected successfully');
+  console.log('✅ Mongoose connected to MongoDB', process.env.MONGO_URI);
 });
 
 mongoose.connection.on('error', (err) => {
-  console.error(`❌ Mongoose connection error:${process.env.MONGO_URI}`, err);
+  console.error('❌ Mongoose connection error:', err);
 });
+  
 
 // Import routes
 const authRoutes = require('./routes/auth');
@@ -32,6 +54,8 @@ const productRoutes = require('./routes/product');
 const orderRoutes = require('./routes/order');
 
 const cartRoutes = require('./routes/cart');
+// Connect to MongoDB
+
 
 // Use routes
 app.use('/api/auth', authRoutes);
@@ -41,5 +65,5 @@ app.use('/api/orders', orderRoutes);
 
 app.use('/api/cart', cartRoutes);
 
-// ❌ REMOVE app.listen(PORT) - Vercel doesn’t support this
-module.exports = app; // Export Express app
+// Start server
+
