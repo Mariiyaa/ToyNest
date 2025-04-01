@@ -30,7 +30,7 @@ const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/profile');
 const productRoutes = require('./routes/product');
 const orderRoutes = require('./routes/order');
-const couponRoutes = require('./routes/coupon');
+
 const cartRoutes = require('./routes/cart');
 
 // Use routes
@@ -38,7 +38,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
-app.use('/api/coupons', couponRoutes);
+
 app.use('/api/cart', cartRoutes);
 
 // ❌ REMOVE app.listen(PORT) - Vercel doesn’t support this
