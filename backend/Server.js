@@ -23,7 +23,6 @@ app.use((req, res, next) => {
   next();
 });
 
-console.log("CORS Configured for:", process.env.CLIENT_URL);
 
 
 app.use(cors({
