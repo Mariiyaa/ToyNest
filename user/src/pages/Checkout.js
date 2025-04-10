@@ -148,47 +148,139 @@ const Checkout = () => {
   };
 
   return (
-    <div className="p-6 max-w-6xl mx-auto grid grid-cols-3 gap-8 font-comfortaa">
+    <div className="p-4 sm:p-6 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 font-comfortaa">
       {/* Left Section: Delivery Info */}
-      <div className="col-span-2 bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold mb-6 text-[#1572A1]">Delivery Info</h2>
-        <form className="grid grid-cols-2 gap-4">
-          <input type="text" name="firstName" value={formData.firstName} placeholder="First name" className="border p-2 rounded" onChange={handleChange} required />
-          <input type="text" name="lastName" value={formData.lastName} placeholder="Last name" className="border p-2 rounded" onChange={handleChange} required />
-          <input type="text" name="address" value={formData.address} placeholder="Street address" className="col-span-2 border p-2 rounded" onChange={handleChange} required />
-          <input type="text" name="city" value={formData.city} placeholder="City" className="border p-2 rounded" onChange={handleChange} required />
-          <input type="text" name="state" value={formData.state} placeholder="State" className="border p-2 rounded" onChange={handleChange} required />
-          <input type="text" name="country" value={formData.country} placeholder="Country" className="border p-2 rounded" onChange={handleChange} required />
-          <input type="text" name="postalCode" value={formData.postalCode} placeholder="ZIP code" className="border p-2 rounded" onChange={handleChange} required />
-          <input type="text" name="phone" value={formData.phone} placeholder="Phone" className="border p-2 rounded" onChange={handleChange} required />
-          <input type="email" name="email" value={formData.email} placeholder="Email address" className="col-span-2 border p-2 rounded" onChange={handleChange} required />
-          <textarea name="orderNotes" placeholder="Order notes (optional)" className="col-span-2 border p-2 rounded" onChange={handleChange} />
+      <div className="lg:col-span-2 bg-white p-4 sm:p-6 rounded-lg shadow-md">
+        <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-[#1572A1]">Delivery Info</h2>
+        <form className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+          <input 
+            type="text" 
+            name="firstName" 
+            value={formData.firstName} 
+            placeholder="First name" 
+            className="border p-2 rounded text-sm sm:text-base" 
+            onChange={handleChange} 
+            required 
+          />
+          <input 
+            type="text" 
+            name="lastName" 
+            value={formData.lastName} 
+            placeholder="Last name" 
+            className="border p-2 rounded text-sm sm:text-base" 
+            onChange={handleChange} 
+            required 
+          />
+          <input 
+            type="text" 
+            name="address" 
+            value={formData.address} 
+            placeholder="Street address" 
+            className="col-span-1 sm:col-span-2 border p-2 rounded text-sm sm:text-base" 
+            onChange={handleChange} 
+            required 
+          />
+          <input 
+            type="text" 
+            name="city" 
+            value={formData.city} 
+            placeholder="City" 
+            className="border p-2 rounded text-sm sm:text-base" 
+            onChange={handleChange} 
+            required 
+          />
+          <input 
+            type="text" 
+            name="state" 
+            value={formData.state} 
+            placeholder="State" 
+            className="border p-2 rounded text-sm sm:text-base" 
+            onChange={handleChange} 
+            required 
+          />
+          <input 
+            type="text" 
+            name="country" 
+            value={formData.country} 
+            placeholder="Country" 
+            className="border p-2 rounded text-sm sm:text-base" 
+            onChange={handleChange} 
+            required 
+          />
+          <input 
+            type="text" 
+            name="postalCode" 
+            value={formData.postalCode} 
+            placeholder="ZIP code" 
+            className="border p-2 rounded text-sm sm:text-base" 
+            onChange={handleChange} 
+            required 
+          />
+          <input 
+            type="text" 
+            name="phone" 
+            value={formData.phone} 
+            placeholder="Phone" 
+            className="border p-2 rounded text-sm sm:text-base" 
+            onChange={handleChange} 
+            required 
+          />
+          <input 
+            type="email" 
+            name="email" 
+            value={formData.email} 
+            placeholder="Email address" 
+            className="col-span-1 sm:col-span-2 border p-2 rounded text-sm sm:text-base" 
+            onChange={handleChange} 
+            required 
+          />
+          <textarea 
+            name="orderNotes" 
+            placeholder="Order notes (optional)" 
+            className="col-span-1 sm:col-span-2 border p-2 rounded text-sm sm:text-base" 
+            onChange={handleChange} 
+            rows="3"
+          />
         </form>
 
-        <button onClick={handlePayment} className="col-span-2 bg-[#1572A1] text-white w-full py-3 mt-6 font-bold rounded-lg text-lg hover:bg-[#125a80] transition-colors">
+        <button 
+          onClick={handlePayment} 
+          className="col-span-1 sm:col-span-2 bg-[#1572A1] text-white w-full py-2 sm:py-3 mt-4 sm:mt-6 font-bold rounded-lg text-base sm:text-lg hover:bg-[#125a80] transition-colors"
+        >
           Place Order
         </button>
       </div>
 
       {/* Right Section: Order Summary */}
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-bold mb-4 text-[#1572A1]">Your Order</h2>
-        {cart.map((item) => (
-          <div key={item.id} className="flex justify-between items-center border-b pb-2 mb-2">
-            <div className="flex items-center gap-4">
-              <img src={item.image} alt={item.name} className="w-12 h-12 object-contain" />
-              <div>
-                <p className="font-semibold">{item.name}</p>
-                <p className="text-sm text-gray-600">Amount: {item.quantity}</p>
+      <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md h-fit">
+        <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-[#1572A1]">Your Order</h2>
+        <div className="space-y-3 sm:space-y-4">
+          {cart.map((item) => (
+            <div key={item.id} className="flex justify-between items-center border-b pb-2 mb-2">
+              <div className="flex items-center gap-2 sm:gap-4">
+                <img src={item.image} alt={item.name} className="w-10 h-10 sm:w-12 sm:h-12 object-contain" />
+                <div>
+                  <p className="font-semibold text-sm sm:text-base">{item.name}</p>
+                  <p className="text-xs sm:text-sm text-gray-600">Amount: {item.quantity}</p>
+                </div>
               </div>
+              <p className="text-sm sm:text-base">₹ {(item.price * item.quantity).toLocaleString("en-IN")}</p>
             </div>
-            <p>₹ {(item.price * item.quantity).toLocaleString("en-IN")}</p>
-          </div>
-        ))}
+          ))}
+        </div>
         <div className="space-y-2 mt-4">
-          <p className="flex justify-between"><span>Subtotal:</span> <span>₹ {totalBill.toLocaleString("en-IN")}</span></p>
-          <p className="flex justify-between font-bold"><span>Shipping:</span> <span>₹ {shipping.toLocaleString("en-IN")}</span></p>
-          <p className="flex justify-between font-bold text-lg border-t pt-2"><span>Total:</span> <span>₹ {(totalBill + shipping).toLocaleString("en-IN")}</span></p>
+          <p className="flex justify-between text-sm sm:text-base">
+            <span>Subtotal:</span> 
+            <span>₹ {totalBill.toLocaleString("en-IN")}</span>
+          </p>
+          <p className="flex justify-between font-bold text-sm sm:text-base">
+            <span>Shipping:</span> 
+            <span>₹ {shipping.toLocaleString("en-IN")}</span>
+          </p>
+          <p className="flex justify-between font-bold text-base sm:text-lg border-t pt-2 mt-2">
+            <span>Total:</span> 
+            <span>₹ {(totalBill + shipping).toLocaleString("en-IN")}</span>
+          </p>
         </div>
       </div>
     </div>
