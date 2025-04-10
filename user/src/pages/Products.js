@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
+import Login from "../components/Login";
 
 const Product = () => {
   const [products, setProducts] = useState([]);
@@ -9,10 +10,14 @@ const Product = () => {
   const [error, setError] = useState(null);
   const [selectedAgeRange, setSelectedAgeRange] = useState(""); // Dynamic Age Filter
   const [ageGroups, setAgeGroups] = useState([]); // Unique Age Groups
+  const [showLogin, setShowLogin] = useState(false);
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const searchQuery = searchParams.get("search") || ""; // Get search query from URL
   const categoryParam = searchParams.get("category") || ""; // Get category from URL
+  const storedUser = sessionStorage.getItem("user");
+  const parsedUser = storedUser ? JSON.parse(storedUser) : null;
+  const userId = parsedUser ? parsedUser._id : null;
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -75,6 +80,14 @@ const Product = () => {
     setFilteredProducts(filtered);
   };
 
+  const handleAddToCart = (product) => {
+    if (!userId) {
+      setShowLogin(true);
+      return;
+    }
+    // Add to cart logic here
+  };
+
   if (loading) return <p className="text-center text-lg py-8">Loading...</p>;
   if (error) return <p className="text-center text-red-500 py-8">{error}</p>;
 
@@ -121,15 +134,26 @@ const Product = () => {
               <h2 className="text-base sm:text-lg font-semibold mt-2">{product.name}</h2>
               <p className="text-gray-600 text-sm sm:text-base">₹ {product.price.toLocaleString("en-IN")}</p>
               <p className="text-xs sm:text-sm text-gray-500">Age Group: {product.ageGroup}</p>
-              <Link to={`/products/${product._id}`} className="text-[#1572A1] hover:text-[#125a80] transition-colors text-sm sm:text-base inline-block mt-1">
-                View Details
-              </Link>
+              <div className="flex justify-between items-center mt-2">
+                <Link to={`/products/${product._id}`} className="text-[#1572A1] hover:text-[#125a80] transition-colors text-sm sm:text-base">
+                  View Details
+                </Link>
+                <button
+                  onClick={() => handleAddToCart(product)}
+                  className="bg-[#1572A1] text-white px-3 py-1 rounded hover:bg-[#125a80] transition-colors text-sm sm:text-base"
+                  disabled={product.stock === 0}
+                >
+                  Add to Cart
+                </button>
+              </div>
             </div>
           ))}
         </div>
       ) : (
         <p className="text-center text-gray-500 mt-4">No products found.</p>
       )}
+
+      {showLogin && <Login onClose={() => setShowLogin(false)} />}
     </div>
   );
 };

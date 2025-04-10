@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { fetchCart, removeFromCart, updateCartItem } from "../utils/cartUtils";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import Login from "../components/Login";
 
-const Cart = ({ user }) => {
+const Cart = () => {
   const [cart, setCart] = useState([]);
+  const [showLogin, setShowLogin] = useState(false);
   const storedUser = sessionStorage.getItem("user");
   const parsedUser = storedUser ? JSON.parse(storedUser) : null;
   const userId = parsedUser ? parsedUser._id : null;
@@ -12,6 +14,11 @@ const Cart = ({ user }) => {
   const shipping = 15;
 
   useEffect(() => {
+    if (!userId) {
+      setShowLogin(true);
+      return;
+    }
+
     const loadCart = async () => {
       const cartItems = await fetchCart(userId);
       setCart(cartItems || []);
@@ -21,14 +28,23 @@ const Cart = ({ user }) => {
   }, [userId]);
 
   const handleRemove = async (id, variant) => {
+    if (!userId) {
+      setShowLogin(true);
+      return;
+    }
+
     const result = await removeFromCart(userId, id, variant);
     if (result !== false) {
-      // Update local cart state with the new cart items from the server
       setCart(result);
     }
   };
 
   const handleQuantityChange = async (id, variant, newQuantity) => {
+    if (!userId) {
+      setShowLogin(true);
+      return;
+    }
+
     if (newQuantity <= 0) {
       await handleRemove(id, variant);
       return;
@@ -48,6 +64,10 @@ const Cart = ({ user }) => {
   const totalBill = cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
   const handleProceedToCheckout = () => {
+    if (!userId) {
+      setShowLogin(true);
+      return;
+    }
     navigate("/checkout", { state: { cart, totalBill } });
   };
 
@@ -55,7 +75,17 @@ const Cart = ({ user }) => {
     <div className="max-w-6xl mx-auto p-4 sm:p-6 font-comfortaa">
       <h1 className="text-xl sm:text-2xl font-bold text-[#1572A1] mb-4 sm:mb-6">Shopping Cart</h1>
 
-      {cart.length === 0 ? (
+      {!userId ? (
+        <div className="text-center py-6 sm:py-8">
+          <p className="text-gray-600 mb-4">Please login to view your cart</p>
+          <button 
+            onClick={() => setShowLogin(true)}
+            className="inline-block bg-[#1572A1] text-white px-4 sm:px-6 py-2 rounded-lg hover:bg-[#125a80] transition-colors"
+          >
+            Login
+          </button>
+        </div>
+      ) : cart.length === 0 ? (
         <div className="text-center py-6 sm:py-8">
           <p className="text-gray-600 mb-4">Your cart is empty</p>
           <Link 
@@ -133,6 +163,8 @@ const Cart = ({ user }) => {
           </div>
         </div>
       )}
+
+      {showLogin && <Login onClose={() => setShowLogin(false)} />}
     </div>
   );
 };

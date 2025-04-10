@@ -11,6 +11,7 @@ import educational from '../assets/educational.png'
 import ecoFriendly from '../assets/ecoFriendly.png'
 import stuffed from '../assets/stuffed.png'
 import ReviewSection from '../components/ReviewSection';
+import Login from '../components/Login';
 
 // Fix for default marker icon in react-leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -29,6 +30,10 @@ const Home = () => {
   const [activeTab, setActiveTab] = useState('featured');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showLogin, setShowLogin] = useState(false);
+  const storedUser = sessionStorage.getItem("user");
+  const parsedUser = storedUser ? JSON.parse(storedUser) : null;
+  const userId = parsedUser ? parsedUser._id : null;
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -63,6 +68,14 @@ const Home = () => {
   }, []);
 
   const displayProducts = products[activeTab] || [];
+
+  const handleAddToCart = (product) => {
+    if (!userId) {
+      setShowLogin(true);
+      return;
+    }
+    // Add to cart logic here
+  };
 
   if (loading) return <p className="text-center py-8 font-comfortaa">Loading...</p>;
   if (error) return <p className="text-center py-8 text-red-500 font-comfortaa">{error}</p>;
@@ -159,7 +172,10 @@ const Home = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                   </svg>
                 </button>
-                <button className="p-1 sm:p-2 bg-white rounded-full shadow-md hover:text-[#1572A1]">
+                <button 
+                  onClick={() => handleAddToCart(product)}
+                  className="p-1 sm:p-2 bg-white rounded-full shadow-md hover:text-[#1572A1]"
+                >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                   </svg>
@@ -283,6 +299,8 @@ const Home = () => {
           </div>
         </div>
       </div>
+
+      {showLogin && <Login onClose={() => setShowLogin(false)} />}
     </div>
   );
 };
