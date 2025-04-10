@@ -75,12 +75,12 @@ const Login = ({ onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white p-8 rounded-lg shadow-lg w-96 relative">
         <button className="absolute top-3 right-3" onClick={onClose}>
           <X size={24} />
         </button>
-        <h2 className="text-2xl font-semibold text-[#1572A1] text-center">Login</h2>
+        <h2 className="text-2xl font-semibold text-[#1572A1] text-center font-comfortaa">Login</h2>
 
         <form onSubmit={handleLogin} className="space-y-4 mt-4">
           <div className="flex items-center border rounded px-3 py-2">
@@ -88,7 +88,7 @@ const Login = ({ onClose }) => {
             <input
               type="email"
               placeholder="Email"
-              className="w-full focus:outline-none ml-2"
+              className="w-full focus:outline-none ml-2 font-comfortaa"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -98,29 +98,28 @@ const Login = ({ onClose }) => {
             <input
               type="password"
               placeholder="Password"
-              className="w-full focus:outline-none ml-2"
+              className="w-full focus:outline-none ml-2 font-comfortaa"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          {error && <p className="text-red">{error}</p>}
-          {success && <p className="text-green">{success}</p>}
-          <button className="bg-[#1572A1] text-white w-full py-2 rounded hover:bg-[#125a80]"
-          >
+          {error && <p className="text-red font-comfortaa">{error}</p>}
+          {success && <p className="text-green font-comfortaa">{success}</p>}
+          <button className="bg-[#1572A1] text-white w-full py-2 rounded hover:bg-[#125a80] font-comfortaa">
             Login
           </button>
         </form>
 
-        <p className="text-center my-2">OR</p>
+        <p className="text-center my-2 font-comfortaa">OR</p>
         <button
-          className="bg-red-500 text-white w-full py-2 rounded flex justify-center items-center space-x-2"
+          className="bg-red-500 text-white w-full py-2 rounded flex justify-center items-center space-x-2 font-comfortaa"
           onClick={handleGoogleLogin}
         >
           <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google" />
           <span>Login with Google</span>
         </button>
 
-        <p className="text-center text-gray-500 mt-4">
+        <p className="text-center text-gray-500 mt-4 font-comfortaa">
           Don't have an account?{" "}
           <button onClick={() => setShowRegister(true)} className="text-[#1572A1] font-semibold focus:outline-none">
             Sign up

@@ -15,25 +15,27 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-
     const storedUser = sessionStorage.getItem("user");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
+
     const updateCartCount = async () => {
       try {
-        const cart = await fetchCart();
-    
-        // Ensure cart is an array before accessing length
-        if (!cart || !Array.isArray(cart)) {
-          setCartCount(0); // Default to 0 if cart is undefined or not an array
+        const storedUser = sessionStorage.getItem("user");
+        const parsedUser = storedUser ? JSON.parse(storedUser) : null;
+        const userId = parsedUser?._id;
+        
+        if (!userId) {
+          setCartCount(0);
           return;
         }
-    
+
+        const cart = await fetchCart(userId);
         setCartCount(cart.length);
       } catch (error) {
         console.error("Error fetching cart:", error);
-        setCartCount(0); // Default to 0 in case of an error
+        setCartCount(0);
       }
     };
     
@@ -43,7 +45,7 @@ const Navbar = () => {
     return () => {
       window.removeEventListener("cartUpdated", updateCartCount);
     };
-  }, [showLogin]);
+  }, []);
 
   const handleLogout = () => {
     sessionStorage.removeItem("user");
@@ -67,7 +69,7 @@ const Navbar = () => {
       </div>
 
       <nav className="flex justify-between items-center px-10 py-5 bg-white shadow-md">
-        <Link to="/" className="text-2xl font-bold text-[#1572A1]">
+        <Link to="/" className="text-2xl font-bold text-[#1572A1] font-comfortaa">
           ToyNest
         </Link>
 
@@ -86,7 +88,7 @@ const Navbar = () => {
               placeholder="Search products..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="border rounded-full px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-[#1572A1]"
+              className="border rounded-full px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-[#1572A1] font-comfortaa"
             />
             <button 
               onClick={handleSearch} 
@@ -102,7 +104,7 @@ const Navbar = () => {
         <Link to="/cart" className="relative cursor-pointer">
             <ShoppingCart size={24} className="text-gray-700" />
             {cartCount > 0 && (
-              <span className="absolute -top-1 -right-2 bg-yellow-500 text-white text-xs px-1.5 py-0.5 rounded-full">
+              <span className="absolute -top-1 -right-2 bg-yellow-500 text-white text-xs px-1.5 py-0.5 rounded-full font-comfortaa">
                 {cartCount}
               </span>
             )}
@@ -113,19 +115,24 @@ const Navbar = () => {
               <div className="absolute right-0 mt-2 w-32 bg-white shadow-lg rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
                   onClick={handleLogout}
-                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left"
+                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left font-comfortaa"
                 >
                   Logout
                 </button>
-                <Link to="/profile" className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left">Profile</Link>
+                <Link to="/profile" className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left font-comfortaa">
+                  Profile
+                </Link>
+                <Link to="/orders" className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left font-comfortaa">
+                  Orders
+                </Link>
               </div>
             </div>
           ) : (
             <>
-              <button onClick={() => setShowLogin(true)} className="text-gray-700 font-medium hover:text-[#1572A1]">
+              <button onClick={() => setShowLogin(true)} className="text-gray-700 font-medium hover:text-[#1572A1] font-comfortaa">
                 Login
               </button>
-              <button onClick={() => setShowRegister(true)} className="text-gray-700 font-medium hover:text-[#1572A1]">
+              <button onClick={() => setShowRegister(true)} className="text-gray-700 font-medium hover:text-[#1572A1] font-comfortaa">
                 Register
               </button>
             </>

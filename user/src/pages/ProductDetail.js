@@ -22,11 +22,18 @@ const ProductDetail = () => {
         const response = await axios.get(`${process.env.REACT_APP_BACK_PORT}/api/products/${id}`);
         setProduct(response.data);
 
-        if (response.data.variants?.length > 0 && response.data.variants[0].image) {
+        // Set the main display image based on requirements
+        if (response.data.image) {
+          // If product.image exists, use it as the main display image
+          setSelectedImage(response.data.image);
+          setSelectedVariant(null);
+        } else if (response.data.variants?.length > 0 && response.data.variants[0].image) {
+          // Otherwise, use the first variant's image
           setSelectedImage(response.data.variants[0].image);
           setSelectedVariant(response.data.variants[0]);
         } else {
-          setSelectedImage(response.data.images?.[0] || ""); // Fallback to first image
+          // Fallback to first image in the images array if available
+          setSelectedImage(response.data.images?.[0] || "");
         }
       } catch (err) {
         setError("Error fetching product details");
@@ -41,10 +48,10 @@ const ProductDetail = () => {
   useEffect(() => {
     // Check if the product is already in the cart
     const checkCartStatus = async () => {
-      if (!userId) return;
+      if (!userId || !product) return;
       const cartItems = await fetchCart(userId);
-      const isInCart = cartItems.some(
-        (item) => item.id === product?._id && item.variant === selectedVariant?.color
+      const isInCart = cartItems?.some(
+        (item) => item.id === product._id && item.variant === selectedVariant?.color
       );
       setIsAddedToCart(isInCart);
     };
@@ -53,16 +60,21 @@ const ProductDetail = () => {
   }, [product, selectedVariant, userId]);
 
   const handleAddToCart = async () => {
+    if (!userId) {
+      // Redirect to login or show login prompt
+      alert("Please log in to add items to cart");
+      return;
+    }
     await addToCart(userId, product, selectedVariant);
     setIsAddedToCart(true);
   };
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
-  if (!product) return <p>Product not found</p>;
+  if (loading) return <p className="font-comfortaa text-center py-8">Loading...</p>;
+  if (error) return <p className="font-comfortaa text-center py-8 text-red-500">{error}</p>;
+  if (!product) return <p className="font-comfortaa text-center py-8">Product not found</p>;
 
   return (
-    <div className="max-w-5xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+    <div className="max-w-5xl mx-auto p-6 bg-white shadow-lg rounded-lg font-comfortaa">
       <h1 className="text-2xl font-bold text-gray-800">{product.name}</h1>
 
       {/* Main Product Image Display */}
@@ -75,7 +87,7 @@ const ProductDetail = () => {
               src={img}
               alt={`Thumbnail ${index}`}
               className={`w-16 h-16 object-contain cursor-pointer rounded border ${
-                selectedImage === img ? "border-blue-500" : "border-gray-300"
+                selectedImage === img ? "border-[#1572A1]" : "border-gray-300"
               }`}
               onClick={() => {
                 setSelectedImage(img);
@@ -91,7 +103,7 @@ const ProductDetail = () => {
                 src={variant.image}
                 alt={`Variant ${variant.color}`}
                 className={`w-16 h-16 object-contain cursor-pointer rounded border ${
-                  selectedImage === variant.image ? "border-blue-500" : "border-gray-300"
+                  selectedImage === variant.image ? "border-[#1572A1]" : "border-gray-300"
                 }`}
                 onClick={() => {
                   setSelectedImage(variant.image);
@@ -111,36 +123,46 @@ const ProductDetail = () => {
       </div>
 
       {/* Product Details */}
-      <p className="text-gray-600 italic mt-4">{product.description}</p>
-      <p className="text-gray-600">₹ {product.price.toLocaleString("en-IN")}</p>
-      <p className="text-gray-700"><strong>Category:</strong> {product.category}</p>
-      <p className="text-gray-700"><strong>Brand:</strong> {product.brand}</p>
-      <p className="text-gray-700"><strong>Age Group:</strong> {product.ageGroup}</p>
-      <p className="text-gray-700"><strong>Size:</strong> {product.size}</p>
-      <p className="text-gray-700"><strong>Rating:</strong> {product.rating}</p>
+      <div className="mt-6 space-y-3">
+        <p className="text-gray-600 italic">{product.description}</p>
+        <p className="text-2xl font-bold text-[#1572A1]">₹ {product.price.toLocaleString("en-IN")}</p>
+        <p className="text-gray-700"><span className="font-semibold">Category:</span> {product.category}</p>
+        <p className="text-gray-700"><span className="font-semibold">Brand:</span> {product.brand}</p>
+        <p className="text-gray-700"><span className="font-semibold">Age Group:</span> {product.ageGroup}</p>
+        <p className="text-gray-700"><span className="font-semibold">Size:</span> {product.size}</p>
+        <p className="text-gray-700"><span className="font-semibold">Rating:</span> {product.rating}</p>
+      </div>
 
       {/* Variants Section */}
       {product.variants?.length > 0 && (
-        <div className="mt-4">
-          <h2 className="text-lg font-semibold">Variants:</h2>
+        <div className="mt-6">
+          <h2 className="text-lg font-semibold mb-2">Variants:</h2>
           {selectedVariant && (
-            <p className="mt-2 text-gray-700">
-              <strong>Selected Variant:</strong> {selectedVariant.color}
+            <p className="text-gray-700">
+              <span className="font-semibold">Selected Variant:</span> {selectedVariant.color}
             </p>
           )}
         </div>
       )}
 
       {/* Add to Cart Button */}
-      <button
-        className={`mt-4 px-4 py-2 text-white font-semibold rounded 
-          ${isAddedToCart ? "bg-gray-400 cursor-not-allowed" : "bg-green-500 hover:bg-green-600"}
-        `}
-        onClick={handleAddToCart}
-        disabled={isAddedToCart}
-      >
-        {isAddedToCart ? "Added to Cart" : "Add to Cart"}
-      </button>
+      {product.stock === 0 ? (
+        <div className="mt-6 px-6 py-3 bg-gray-400 text-white font-semibold rounded-lg text-center">
+          Out of Stock
+        </div>
+      ) : (
+        <button
+          className={`mt-6 px-6 py-3 text-white font-semibold rounded-lg transition-colors ${
+            isAddedToCart 
+              ? "bg-gray-400 cursor-not-allowed" 
+              : "bg-[#1572A1] hover:bg-[#125a80]"
+          }`}
+          onClick={handleAddToCart}
+          disabled={isAddedToCart}
+        >
+          {isAddedToCart ? "Added to Cart" : "Add to Cart"}
+        </button>
+      )}
     </div>
   );
 };

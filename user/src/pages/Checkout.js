@@ -1,92 +1,195 @@
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { removeFromCart } from "../utils/cartUtils";
 
 const Checkout = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { cart, totalBill } = location.state || { cart: [], totalBill: 0 };
-  const shipping = totalBill > 4000 ? 0 : 60; // Free shipping for orders over $100
+  const shipping = totalBill > 4000 ? 0 : 60;
 
   const storedUser = sessionStorage.getItem("user");
   const parsedUser = storedUser ? JSON.parse(storedUser) : {};
 
   const [formData, setFormData] = useState({
-      firstName: parsedUser.name?.split(" ")[0] || "",
-      lastName: parsedUser.name?.split(" ")[1] || "",
-      phone: parsedUser.phone || "",
-      email: parsedUser.email || "",
-      address: parsedUser.address?.street || "",
-      city: parsedUser.address?.city || "",
-      state: parsedUser.address?.state || "",
-      country: parsedUser.address?.country || "",
-      postalCode: parsedUser.address?.postalCode || "",
-      orderNotes: "",
-      paymentMethod: "credit_card",
+    firstName: parsedUser.name?.split(" ")[0] || "",
+    lastName: parsedUser.name?.split(" ")[1] || "",
+    phone: parsedUser.phone || "",
+    email: parsedUser.email || "",
+    address: parsedUser.address?.street || "",
+    city: parsedUser.address?.city || "",
+    state: parsedUser.address?.state || "",
+    country: parsedUser.address?.country || "",
+    postalCode: parsedUser.address?.postalCode || "",
+    orderNotes: "",
   });
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: type === "radio" ? value : value,
+      [name]: value,
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    alert("Order placed successfully!");
+  const handlePayment = async () => {
+    try {
+      const totalAmount = totalBill + shipping;
+
+      // Validate form data
+      const requiredFields = ['firstName', 'lastName', 'phone', 'email', 'address', 'city', 'state', 'country', 'postalCode'];
+      const missingFields = requiredFields.filter(field => !formData[field]);
+      
+      if (missingFields.length > 0) {
+        alert('Please fill in all required fields: ' + missingFields.join(', '));
+        return;
+      }
+
+      // Prepare order data
+      const orderData = {
+        userId: parsedUser._id,
+        products: cart.map(item => ({
+          productId: item.id,
+          quantity: item.quantity,
+          variant: item.variant,
+          price: item.price,
+          name: item.name
+        })),
+        shippingDetails: {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          phone: formData.phone,
+          address: formData.address,
+          city: formData.city,
+          state: formData.state,
+          country: formData.country,
+          postalCode: formData.postalCode,
+          orderNotes: formData.orderNotes
+        },
+        totalPrice: totalBill,
+        shippingCost: shipping
+      };
+
+      // Call backend API to create Razorpay order
+      const response = await fetch(`${process.env.REACT_APP_BACK_PORT}/api/payment/order`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          amount: totalAmount,
+          orderData
+        }),
+      });
+
+      const razorpayOrder = await response.json();
+      
+      if (!razorpayOrder) {
+        alert("Error processing payment. Please try again.");
+        return;
+      }
+
+      const options = {
+        key: process.env.REACT_APP_RAZORPAY_KEY_ID,
+        amount: razorpayOrder.amount,
+        currency: "INR",
+        name: "ToyNest",
+        description: "Toy Purchase",
+        order_id: razorpayOrder.id,
+        handler: async function (response) {
+          try {
+            // Verify payment with backend
+            const verifyResponse = await fetch(`${process.env.REACT_APP_BACK_PORT}/api/payment/verify`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                orderData // Send order data for creating the order
+              }),
+            });
+
+            const verifyData = await verifyResponse.json();
+
+            if (verifyData.success) {
+              // Clear cart and redirect to order confirmation
+              sessionStorage.removeItem('cart');
+              alert("Order placed successfully! Order ID: " + verifyData.orderId);
+              navigate('/orders'); // Add this route to show order history
+            } else {
+              alert("Payment verification failed. Please contact support.");
+            }
+          } catch (error) {
+            console.error("Error verifying payment:", error);
+            alert("Error verifying payment. Please contact support.");
+          }
+        },
+        prefill: {
+          name: `${formData.firstName} ${formData.lastName}`,
+          email: formData.email,
+          contact: formData.phone,
+        },
+        notes: {
+          address: `${formData.address}, ${formData.city}, ${formData.state}, ${formData.country}, ${formData.postalCode}`,
+          orderNotes: formData.orderNotes
+        },
+        theme: {
+          color: "#1572A1",
+        },
+      };
+
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+    await removeFromCart(parsedUser._id, cart.map(item => item.id), cart.map(item => item.variant));
+    } catch (error) {
+      console.error("Error initiating payment:", error);
+      alert("Error initiating payment. Please try again.");
+    }
   };
 
   return (
-    <div className="p-6 max-w-6xl mx-auto grid grid-cols-3 gap-8">
-      {/* Left Section: Delivery Info & Payment */}
+    <div className="p-6 max-w-6xl mx-auto grid grid-cols-3 gap-8 font-comfortaa">
+      {/* Left Section: Delivery Info */}
       <div className="col-span-2 bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold mb-4">Delivery info</h2>
-        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
-        <input type="text" name="firstName" value={formData.firstName} placeholder="First name" className="border p-2 rounded" onChange={handleChange} required />
-                    <input type="text" name="lastName" value={formData.lastName} placeholder="Last name" className="border p-2 rounded" onChange={handleChange} required />
-                    <input type="text" name="address" value={formData.address} placeholder="Street address" className="col-span-2 border p-2 rounded" onChange={handleChange} required />
-                    <input type="text" name="city" value={formData.city} placeholder="City" className="border p-2 rounded" onChange={handleChange} required />
-                    <input type="text" name="state" value={formData.state} placeholder="State" className="border p-2 rounded" onChange={handleChange} required />
-                    <input type="text" name="country" value={formData.country} placeholder="Country" className="border p-2 rounded" onChange={handleChange} required />
-                    <input type="text" name="postalCode" value={formData.postalCode} placeholder="ZIP code" className="border p-2 rounded" onChange={handleChange} required />
-                    <input type="text" name="phone" value={formData.phone} placeholder="Phone" className="border p-2 rounded" onChange={handleChange} required />
-                    <input type="email" name="email" value={formData.email} placeholder="Email address" className="col-span-2 border p-2 rounded" onChange={handleChange} required />
-                    <textarea name="orderNotes" placeholder="Order notes (optional)" className="col-span-2 border p-2 rounded" onChange={handleChange}></textarea>
-
-          <h2 className="text-xl font-bold col-span-2 mt-6">Payment</h2>
-          <div className="col-span-2">
-            <label className="flex items-center gap-2">
-              <input type="radio" name="paymentMethod" value="credit_card" checked={formData.paymentMethod === "credit_card"} onChange={handleChange} /> Credit Card
-            </label>
-            <label className="flex items-center gap-2 mt-2">
-              <input type="radio" name="paymentMethod" value="paypal" checked={formData.paymentMethod === "paypal"} onChange={handleChange} /> PayPal
-            </label>
-          </div>
-
-          <button type="submit" className="col-span-2 bg-[#0F83B2] text-white w-full py-3 mt-4 font-bold rounded-md text-lg">
-            Place Order
-          </button>
+        <h2 className="text-2xl font-bold mb-6 text-[#1572A1]">Delivery Info</h2>
+        <form className="grid grid-cols-2 gap-4">
+          <input type="text" name="firstName" value={formData.firstName} placeholder="First name" className="border p-2 rounded" onChange={handleChange} required />
+          <input type="text" name="lastName" value={formData.lastName} placeholder="Last name" className="border p-2 rounded" onChange={handleChange} required />
+          <input type="text" name="address" value={formData.address} placeholder="Street address" className="col-span-2 border p-2 rounded" onChange={handleChange} required />
+          <input type="text" name="city" value={formData.city} placeholder="City" className="border p-2 rounded" onChange={handleChange} required />
+          <input type="text" name="state" value={formData.state} placeholder="State" className="border p-2 rounded" onChange={handleChange} required />
+          <input type="text" name="country" value={formData.country} placeholder="Country" className="border p-2 rounded" onChange={handleChange} required />
+          <input type="text" name="postalCode" value={formData.postalCode} placeholder="ZIP code" className="border p-2 rounded" onChange={handleChange} required />
+          <input type="text" name="phone" value={formData.phone} placeholder="Phone" className="border p-2 rounded" onChange={handleChange} required />
+          <input type="email" name="email" value={formData.email} placeholder="Email address" className="col-span-2 border p-2 rounded" onChange={handleChange} required />
+          <textarea name="orderNotes" placeholder="Order notes (optional)" className="col-span-2 border p-2 rounded" onChange={handleChange} />
         </form>
+
+        <button onClick={handlePayment} className="col-span-2 bg-[#1572A1] text-white w-full py-3 mt-6 font-bold rounded-lg text-lg hover:bg-[#125a80] transition-colors">
+          Place Order
+        </button>
       </div>
 
       {/* Right Section: Order Summary */}
       <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-bold mb-4">Your order</h2>
+        <h2 className="text-xl font-bold mb-4 text-[#1572A1]">Your Order</h2>
         {cart.map((item) => (
           <div key={item.id} className="flex justify-between items-center border-b pb-2 mb-2">
             <div className="flex items-center gap-4">
-              <img src={item.image} alt={item.name} className="w-12 h-12" />
+              <img src={item.image} alt={item.name} className="w-12 h-12 object-contain" />
               <div>
                 <p className="font-semibold">{item.name}</p>
-                <p className="text-sm">Amount: {item.quantity}</p>
+                <p className="text-sm text-gray-600">Amount: {item.quantity}</p>
               </div>
             </div>
-            <p>₹{(item.price * item.quantity).toFixed(2)}</p>
+            <p>₹ {(item.price * item.quantity).toLocaleString("en-IN")}</p>
           </div>
         ))}
-        <p className="flex justify-between mt-2"><span>Subtotal:</span> <span>₹{totalBill.toFixed(2)}</span></p>
-        <p className="flex justify-between font-bold mt-1"><span>Shipping:</span> <span>₹{shipping.toFixed(2)}</span></p>
-        <p className="flex justify-between font-bold text-lg mt-2"><span>Total:</span> <span>₹{(totalBill + shipping).toFixed(2)}</span></p>
+        <div className="space-y-2 mt-4">
+          <p className="flex justify-between"><span>Subtotal:</span> <span>₹ {totalBill.toLocaleString("en-IN")}</span></p>
+          <p className="flex justify-between font-bold"><span>Shipping:</span> <span>₹ {shipping.toLocaleString("en-IN")}</span></p>
+          <p className="flex justify-between font-bold text-lg border-t pt-2"><span>Total:</span> <span>₹ {(totalBill + shipping).toLocaleString("en-IN")}</span></p>
+        </div>
       </div>
     </div>
   );

@@ -85,7 +85,7 @@ router.post("/add", async (req, res) => {
 
 // Remove from cart
 router.post("/remove", async (req, res) => {
-    const { userId, id, variant } = req.body;
+    const { userId, productId, variant } = req.body;
     
     if (!userId) {
       return res.status(400).json({ message: "User ID is required" });
@@ -94,14 +94,19 @@ router.post("/remove", async (req, res) => {
     try {
         const cart = await Cart.findOneAndUpdate(
             { userId },
-            { $pull: { items: { id } } }, // Remove item where id matches
+            { $pull: { items: { id: productId, variant: variant } } }, // Remove item where both id and variant match
             { new: true } // Return updated cart
-          );
-          await cart.save()
-      res.json(cart);
+        );
+        
+        if (!cart) {
+            return res.status(404).json({ message: "Cart not found" });
+        }
+        
+        res.json(cart.items);
     } catch (error) {
-      res.status(500).json({ message: "Error removing item" });
+        console.error("Error removing item:", error);
+        res.status(500).json({ message: "Error removing item" });
     }
-  });
+});
   
 module.exports=router

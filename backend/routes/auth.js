@@ -80,7 +80,11 @@ router.post('/login-google', async (req, res) => {
     let user = await User.findOne({ email: decodedFirebaseToken.email });
 
     if (!user) {
-      user = new User({ email: decodedFirebaseToken.email, password: null });
+      user = new User({ 
+        email: decodedFirebaseToken.email, 
+        name: decodedFirebaseToken.name || 'User',
+        password: null 
+      });
       await user.save();
     }
     console.log(user)
