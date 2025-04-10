@@ -1,4 +1,4 @@
-import { ShoppingCart, Search, User } from "lucide-react";
+import { ShoppingCart, Search, User, Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Login from "./Login";
@@ -11,6 +11,7 @@ const Navbar = () => {
   const [user, setUser] = useState(null);
   const [cartCount, setCartCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -50,12 +51,18 @@ const Navbar = () => {
   const handleLogout = () => {
     sessionStorage.removeItem("user");
     setUser(null);
+    setMobileMenuOpen(false);
   };
 
   const handleSearch = () => {
     if (searchQuery.trim() !== "") {
       navigate(`/products?search=${encodeURIComponent(searchQuery)}`);
+      setMobileMenuOpen(false);
     }
+  };
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
   };
 
   return (
@@ -68,21 +75,24 @@ const Navbar = () => {
         </div>
       </div>
 
-      <nav className="flex justify-between items-center px-10 py-5 bg-white shadow-md">
-        <Link to="/" className="text-2xl font-bold text-[#1572A1] font-comfortaa">
-          ToyNest
-        </Link>
+      <nav className="flex flex-col md:flex-row justify-between items-center px-4 md:px-10 py-5 bg-white shadow-md">
+        <div className="flex justify-between items-center w-full md:w-auto">
+          <Link to="/" className="text-2xl font-bold text-[#1572A1] font-comfortaa">
+            ToyNest
+          </Link>
+          
+          {/* Mobile menu button */}
+          <button 
+            className="md:hidden text-gray-700"
+            onClick={toggleMobileMenu}
+          >
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
 
-        {/* <ul className="flex space-x-8 text-gray-700 font-medium">
-          <li><Link to="/" className="hover:text-[#1572A1]">Home</Link></li>
-          <li><Link to="/products" className="hover:text-[#1572A1]">Products</Link></li>
-         
-        </ul> */}
-
-        <div className="flex items-center space-x-6">
-   
-
-          <div className="relative w-full w-[400px]">
+        {/* Mobile menu */}
+        <div className={`${mobileMenuOpen ? 'flex' : 'hidden'} md:hidden flex-col w-full mt-4 space-y-4`}>
+          <div className="relative w-full">
             <input
               type="text"
               placeholder="Search products..."
@@ -98,10 +108,64 @@ const Navbar = () => {
             </button>
           </div>
           
+          <div className="flex justify-center space-x-4 items-center">
+            <Link to="/cart" className="relative cursor-pointer">
+              <ShoppingCart size={24} className="text-gray-700" />
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-2 bg-yellow-500 text-white text-xs px-1.5 py-0.5 rounded-full font-comfortaa">
+                  {cartCount}
+                </span>
+              )}
+            </Link>
+            {user ? (
+              <div className="flex flex-col space-y-2">
+                <Link to="/profile" className="text-gray-700 hover:text-[#1572A1] font-comfortaa">
+                  Profile
+                </Link>
+                <Link to="/orders" className="text-gray-700 hover:text-[#1572A1] font-comfortaa">
+                  Orders
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="text-gray-700 hover:text-[#1572A1] font-comfortaa"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <div className="flex space-x-4">
+                <button onClick={() => {setShowLogin(true); setMobileMenuOpen(false);}} className="text-gray-700 font-medium hover:text-[#1572A1] font-comfortaa">
+                  Login
+                </button>
+                <button onClick={() => {setShowRegister(true); setMobileMenuOpen(false);}} className="text-gray-700 font-medium hover:text-[#1572A1] font-comfortaa">
+                  Register
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
-        <div className="flex space-x-4 items-center">
-        <Link to="/cart" className="relative cursor-pointer">
+        {/* Desktop menu */}
+        <div className="hidden md:flex items-center space-x-6">
+          <div className="relative w-[300px] lg:w-[400px]">
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="border rounded-full px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-[#1572A1] font-comfortaa"
+            />
+            <button 
+              onClick={handleSearch} 
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#1572A1] p-2 rounded-full"
+            >
+              <Search size={18} className="text-white" />
+            </button>
+          </div>
+        </div>
+
+        <div className="hidden md:flex space-x-4 items-center">
+          <Link to="/cart" className="relative cursor-pointer">
             <ShoppingCart size={24} className="text-gray-700" />
             {cartCount > 0 && (
               <span className="absolute -top-1 -right-2 bg-yellow-500 text-white text-xs px-1.5 py-0.5 rounded-full font-comfortaa">
