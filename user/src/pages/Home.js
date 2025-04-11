@@ -243,7 +243,7 @@ const Home = () => {
                   </svg>
                   <div className="ml-3 sm:ml-4">
                     <p className="text-gray-900 font-medium text-sm sm:text-base font-comfortaa">Address</p>
-                    <p className="text-gray-600 text-xs sm:text-sm md:text-base font-comfortaa">123 Toy Street, Vadodara, Gujarat 390001</p>
+                    <p className="text-gray-600 text-xs sm:text-sm md:text-base font-comfortaa">, Vadodara, Gujarat 390001</p>
                   </div>
                 </div>
                 <div className="flex items-start">
@@ -259,7 +259,7 @@ const Home = () => {
                   <svg className="h-5 w-5 sm:h-6 sm:w-6 text-[#1572A1] mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
-                  <div className="ml-3 sm:ml-4">
+                  <div id="contact-email" className="ml-3 sm:ml-4">
                     <p className="text-gray-900 font-medium text-sm sm:text-base font-comfortaa">Email</p>
                     <p className="text-gray-600 text-xs sm:text-sm md:text-base font-comfortaa">info@toynest.com</p>
                   </div>

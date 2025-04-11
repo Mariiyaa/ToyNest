@@ -91,7 +91,7 @@ const Navbar = () => {
         </div>
 
         {/* Mobile menu */}
-        <div className={`${mobileMenuOpen ? 'flex' : 'hidden'} md:hidden flex-col w-full mt-4 space-y-4`}>
+        <div className={`${mobileMenuOpen ? 'flex' : 'hidden'} md:hidden flex-col w-full mt-4 space-y-4 animate-fade-in-down`}>
           <div className="relative w-full">
             <input
               type="text"
@@ -108,36 +108,46 @@ const Navbar = () => {
             </button>
           </div>
           
-          <div className="flex justify-center space-x-4 items-center">
-            <Link to="/cart" className="relative cursor-pointer">
-              <ShoppingCart size={24} className="text-gray-700" />
-              {cartCount > 0 && (
-                <span className="absolute -top-1 -right-2 bg-yellow-500 text-white text-xs px-1.5 py-0.5 rounded-full font-comfortaa">
-                  {cartCount}
-                </span>
-              )}
-            </Link>
+          <div className="flex flex-col items-center w-full">
+            <div className="flex items-center justify-center w-full py-2 border-b border-gray-200">
+              <Link to="/cart" className="relative flex items-center space-x-2">
+                <ShoppingCart size={24} className="text-gray-700" />
+                <span className="text-gray-700 font-comfortaa">Cart</span>
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 left-4 bg-yellow-500 text-white text-xs px-1.5 py-0.5 rounded-full font-comfortaa">
+                    {cartCount}
+                  </span>
+                )}
+              </Link>
+            </div>
+            
             {user ? (
-              <div className="flex flex-col space-y-2">
-                <Link to="/profile" className="text-gray-700 hover:text-[#1572A1] font-comfortaa">
+              <div className="flex flex-col w-full">
+                <Link to="/profile" className="text-gray-700 py-3 px-4 border-b border-gray-200 hover:bg-gray-50 font-comfortaa text-center">
                   Profile
                 </Link>
-                <Link to="/orders" className="text-gray-700 hover:text-[#1572A1] font-comfortaa">
+                <Link to="/orders" className="text-gray-700 py-3 px-4 border-b border-gray-200 hover:bg-gray-50 font-comfortaa text-center">
                   Orders
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="text-gray-700 hover:text-[#1572A1] font-comfortaa"
+                  className="text-gray-700 py-3 px-4 hover:bg-gray-50 font-comfortaa text-center"
                 >
                   Logout
                 </button>
               </div>
             ) : (
-              <div className="flex space-x-4">
-                <button onClick={() => {setShowLogin(true); setMobileMenuOpen(false);}} className="text-gray-700 font-medium hover:text-[#1572A1] font-comfortaa">
+              <div className="flex flex-col w-full">
+                <button 
+                  onClick={() => {setShowLogin(true); setMobileMenuOpen(false);}} 
+                  className="text-gray-700 py-3 px-4 border-b border-gray-200 hover:bg-gray-50 font-comfortaa text-center"
+                >
                   Login
                 </button>
-                <button onClick={() => {setShowRegister(true); setMobileMenuOpen(false);}} className="text-gray-700 font-medium hover:text-[#1572A1] font-comfortaa">
+                <button 
+                  onClick={() => {setShowRegister(true); setMobileMenuOpen(false);}} 
+                  className="text-gray-700 py-3 px-4 hover:bg-gray-50 font-comfortaa text-center"
+                >
                   Register
                 </button>
               </div>
@@ -177,18 +187,18 @@ const Navbar = () => {
             <div className="relative group">
               <User size={28} className="text-gray-700 cursor-pointer" />
               <div className="absolute right-0 mt-2 w-32 bg-white shadow-lg rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
-                <button
-                  onClick={handleLogout}
-                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left font-comfortaa"
-                >
-                  Logout
-                </button>
                 <Link to="/profile" className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left font-comfortaa">
                   Profile
                 </Link>
                 <Link to="/orders" className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left font-comfortaa">
                   Orders
                 </Link>
+                <button
+                  onClick={handleLogout}
+                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left font-comfortaa"
+                >
+                  Logout
+                </button>
               </div>
             </div>
           ) : (

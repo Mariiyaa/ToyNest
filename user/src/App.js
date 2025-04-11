@@ -10,7 +10,7 @@ import axios from 'axios'
 import Profile from './pages/Profile';
 import Checkout from './pages/Checkout';
 import Orders from './pages/Orders';
-
+import AboutUs from './pages/AboutUs';
 
 axios.defaults.baseURL = process.env.REACT_APP_BACK_PORT
 axios.defaults.withCredentials = true
@@ -26,6 +26,7 @@ const App = () => {
          <Route path="/checkout" element={<Checkout />} />
         <Route path="/profile" element={<Profile />} /> 
         <Route path="/orders" element={<Orders />} />
+        <Route path="/about" element={<AboutUs />} />
       </Routes>
       <Footer />
     </Router>
