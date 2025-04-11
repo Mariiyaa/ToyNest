@@ -129,7 +129,7 @@ const ProductDetail = () => {
         <p className="text-gray-700"><span className="font-semibold">Category:</span> {product.category}</p>
         <p className="text-gray-700"><span className="font-semibold">Brand:</span> {product.brand}</p>
         <p className="text-gray-700"><span className="font-semibold">Age Group:</span> {product.ageGroup}</p>
-        <p className="text-gray-700"><span className="font-semibold">Size:</span> {product.size}</p>
+        {/* <p className="text-gray-700"><span className="font-semibold">Size:</span> {product.size}</p> */}
         <p className="text-gray-700"><span className="font-semibold">Rating:</span> {product.rating}</p>
       </div>
 

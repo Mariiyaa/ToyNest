@@ -85,7 +85,23 @@ console.log(storedUser)
             onClick={() => setEditing(!editing)}
             className="px-4 py-2 bg-[#1572A1] text-white rounded-lg hover:bg-[#125a80] transition-colors"
           >
-            {editing ? "Save Changes" : "Edit Profile"}
+           {editing ? (
+              <button
+                type="submit"
+                onClick={handleUpdate}
+                className="px-4 py-2 bg-[#1572A1] text-white rounded-lg hover:bg-[#125a80] transition-colors"
+              >
+                Save Changes
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setEditing(true)}
+                className="px-4 py-2 bg-[#1572A1] text-white rounded-lg hover:bg-[#125a80] transition-colors"
+              >
+                Edit Profile
+              </button>
+            )}
           </button>
         </div>
 

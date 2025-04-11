@@ -72,7 +72,7 @@ const Cart = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-4 sm:p-6 font-comfortaa">
+    <div className="max-w-6xl min-h-screen mx-auto p-4 sm:p-6 font-comfortaa">
       <h1 className="text-xl sm:text-2xl font-bold text-[#1572A1] mb-4 sm:mb-6">Shopping Cart</h1>
 
       {!userId ? (

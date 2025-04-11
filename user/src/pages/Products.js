@@ -138,13 +138,7 @@ const Product = () => {
                 <Link to={`/products/${product._id}`} className="text-[#1572A1] hover:text-[#125a80] transition-colors text-sm sm:text-base">
                   View Details
                 </Link>
-                <button
-                  onClick={() => handleAddToCart(product)}
-                  className="bg-[#1572A1] text-white px-3 py-1 rounded hover:bg-[#125a80] transition-colors text-sm sm:text-base"
-                  disabled={product.stock === 0}
-                >
-                  Add to Cart
-                </button>
+           
               </div>
             </div>
           ))}

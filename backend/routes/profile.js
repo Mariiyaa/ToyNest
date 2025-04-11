@@ -26,7 +26,7 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const userId = req.params.id;
-    console.log(req.body)
+    console.log(userId,"PUtttt")
 
     // Validate and extract only allowed fields from req.body
     const updatedFields = {};
