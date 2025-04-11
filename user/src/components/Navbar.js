@@ -184,7 +184,7 @@ const Navbar = () => {
             )}
           </Link>
           {user ? (
-            <div className="relative group">
+            <div className="z-50 relative group">
               <User size={28} className="text-gray-700 cursor-pointer" />
               <div className="absolute right-0 mt-2 w-32 bg-white shadow-lg rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
                 <Link to="/profile" className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left font-comfortaa">
